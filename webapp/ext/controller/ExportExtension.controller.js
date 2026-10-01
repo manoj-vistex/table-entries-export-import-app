@@ -4,18 +4,19 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/m/Token",
     "sap/m/MessageBox",
-    "sap/m/SelectDialog",
-    "sap/m/StandardListItem"
+    "bteexpimp/ext/controller/valuehelp/TransportRequest",
+    "bteexpimp/ext/controller/valuehelp/TableName"
 ], function (
     ControllerExtension,
     Fragment,
     JSONModel,
     Token,
     MessageBox,
-    SelectDialog,
-    StandardListItem
+    TransportRequestValueHelp,
+    TableNameValueHelp
 ) {
     "use strict";
+
 
     // ---------------------------------------------------------
     // OData information
@@ -24,9 +25,11 @@ sap.ui.define([
     const SERVICE_NAMESPACE =
         "com.sap.gateway.srvd.vta.bte_expimp.v0001";
 
-    const ENTITY_SET = "ExportImportLog";
+    const ENTITY_SET =
+        "ExportImportLog";
 
-    const ACTION_NAME = "export";
+    const ACTION_NAME =
+        "export";
 
 
     return ControllerExtension.extend(
@@ -34,20 +37,24 @@ sap.ui.define([
         {
 
             // =====================================================
-            // OPEN CUSTOM EXPORT DIALOG
+            // OPEN EXPORT DIALOG
             // =====================================================
 
             onExportPress: async function () {
 
-                const oView = this.base.getView();
+                const oView =
+                    this.base.getView();
+
 
                 // Fresh model each time Export is opened
-                const oExportModel = new JSONModel({
-                    description: "",
-                    exportBy: "R",
-                    transportRequest: "",
-                    packageName: ""
-                });
+                const oExportModel =
+                    new JSONModel({
+                        description: "",
+                        exportBy: "R",
+                        transportRequest: "",
+                        packageName: ""
+                    });
+
 
                 oView.setModel(
                     oExportModel,
@@ -66,6 +73,7 @@ sap.ui.define([
                             controller: this
                         });
 
+
                     oView.addDependent(
                         this._oExportDialog
                     );
@@ -78,9 +86,11 @@ sap.ui.define([
                         "tableNamesInput"
                     );
 
+
                 if (oMultiInput) {
 
                     oMultiInput.removeAllTokens();
+
                     oMultiInput.setValue("");
                 }
 
@@ -90,41 +100,34 @@ sap.ui.define([
 
 
             // =====================================================
-            // MULTI TABLE ENTRY
+            // MANUAL TABLE NAME ENTRY
             // =====================================================
 
-            /**
-             * Called when user types a table name
-             * and presses Enter.
-             *
-             * Also supports:
-             *
-             * TAB1;TAB2;TAB3
-             * TAB1,TAB2,TAB3
-             *
-             * in one entry.
-             */
             onTableSubmit: function (oEvent) {
 
                 const oMultiInput =
                     oEvent.getSource();
 
+
                 const sValue =
                     oEvent.getParameter("value") ||
                     oMultiInput.getValue();
+
 
                 this._addTableTokens(
                     oMultiInput,
                     sValue
                 );
 
+
                 oMultiInput.setValue("");
             },
 
 
-            /**
-             * Converts entered text into MultiInput tokens.
-             */
+            // =====================================================
+            // ADD TABLE TOKENS
+            // =====================================================
+
             _addTableTokens: function (
                 oMultiInput,
                 sValue
@@ -136,11 +139,12 @@ sap.ui.define([
 
 
                 /*
-                 * Split using:
+                 * Supports:
                  *
-                 * ;
-                 * ,
-                 * whitespace
+                 * TAB1
+                 * TAB1;TAB2
+                 * TAB1,TAB2
+                 * TAB1 TAB2
                  */
                 const aEnteredTables =
                     sValue
@@ -150,12 +154,10 @@ sap.ui.define([
                             return sTableName
                                 .trim()
                                 .toUpperCase();
-
                         })
                         .filter(Boolean);
 
 
-                // Existing token keys
                 const oExistingTables =
                     new Set(
                         oMultiInput
@@ -165,7 +167,6 @@ sap.ui.define([
                                 return oToken
                                     .getKey()
                                     .toUpperCase();
-
                             })
                     );
 
@@ -173,7 +174,6 @@ sap.ui.define([
                 aEnteredTables.forEach(
                     function (sTableName) {
 
-                        // Do not create duplicates
                         if (
                             oExistingTables.has(
                                 sTableName
@@ -194,14 +194,13 @@ sap.ui.define([
                         oExistingTables.add(
                             sTableName
                         );
-
                     }
                 );
             },
 
 
             // =====================================================
-            // EXPORT BUTTON INSIDE DIALOG
+            // EXPORT
             // =====================================================
 
             onExportConfirm: async function () {
@@ -209,11 +208,16 @@ sap.ui.define([
                 const oView =
                     this.base.getView();
 
+
                 const oExportModel =
-                    oView.getModel("export");
+                    oView.getModel(
+                        "export"
+                    );
+
 
                 const oData =
                     oExportModel.getData();
+
 
                 const oMultiInput =
                     oView.byId(
@@ -222,8 +226,7 @@ sap.ui.define([
 
 
                 // -------------------------------------------------
-                // If user typed something but did NOT press Enter,
-                // convert that text into a token before exporting.
+                // Convert pending table value to token
                 // -------------------------------------------------
 
                 if (
@@ -236,6 +239,7 @@ sap.ui.define([
                             .getValue()
                             .trim();
 
+
                     if (sPendingValue) {
 
                         this._addTableTokens(
@@ -243,13 +247,14 @@ sap.ui.define([
                             sPendingValue
                         );
 
+
                         oMultiInput.setValue("");
                     }
                 }
 
 
                 // -------------------------------------------------
-                // Collect table names from tokens
+                // Collect table names
                 // -------------------------------------------------
 
                 const aTableNames =
@@ -259,7 +264,6 @@ sap.ui.define([
                             .map(function (oToken) {
 
                                 return oToken.getKey();
-
                             })
                         : [];
 
@@ -268,7 +272,11 @@ sap.ui.define([
                 // Validation
                 // -------------------------------------------------
 
-                if (!oData.description) {
+                if (
+                    !this._hasValue(
+                        oData.description
+                    )
+                ) {
 
                     MessageBox.error(
                         "Enter Export Description"
@@ -277,7 +285,12 @@ sap.ui.define([
                     return;
                 }
 
-                if (!oData.exportBy) {
+
+                if (
+                    !this._hasValue(
+                        oData.exportBy
+                    )
+                ) {
 
                     MessageBox.error(
                         "Select Export By"
@@ -331,14 +344,6 @@ sap.ui.define([
 
 
                 // -------------------------------------------------
-                // Convert tokens into one RAP parameter
-                //
-                // TAB1
-                // TAB2
-                // TAB3
-                //
-                // becomes:
-                //
                 // TAB1;TAB2;TAB3
                 // -------------------------------------------------
 
@@ -348,37 +353,42 @@ sap.ui.define([
 
                 this._oExportDialog.close();
 
+
                 const oEditFlow =
                     this.base
                         .getExtensionAPI()
                         .getEditFlow();
 
+
                 try {
 
                     await oEditFlow.securedExecution(
-                        () => this._invokeExportAction({
-                            description:
-                                oData.description || "",
 
-                            exportBy:
-                                oData.exportBy,
+                        () =>
+                            this._invokeExportAction({
 
-                            transportRequest:
-                                oData.exportBy === "R"
-                                    ? oData.transportRequest || ""
-                                    : "",
+                                description:
+                                    oData.description || "",
 
-                            packageName:
-                                oData.exportBy === "P"
-                                    ? oData.packageName || ""
-                                    : "",
+                                exportBy:
+                                    oData.exportBy,
 
-                            tabname:
-                                oData.exportBy === "T"
-                                    ? sTableNames
-                                    : ""
+                                transportRequest:
+                                    oData.exportBy === "R"
+                                        ? oData.transportRequest || ""
+                                        : "",
 
-                        }),
+                                packageName:
+                                    oData.exportBy === "P"
+                                        ? oData.packageName || ""
+                                        : "",
+
+                                tabname:
+                                    oData.exportBy === "T"
+                                        ? sTableNames
+                                        : ""
+                            }),
+
                         {
                             busy: {
                                 check: true,
@@ -386,7 +396,6 @@ sap.ui.define([
                             }
                         }
                     );
-
 
                 } catch (oError) {
 
@@ -400,29 +409,19 @@ sap.ui.define([
 
 
             // =====================================================
-            // CALL RAP STATIC ACTION
+            // RAP EXPORT ACTION
             // =====================================================
 
             _invokeExportAction: async function (
                 oParameters
             ) {
 
-                const oView =
-                    this.base.getView();
-
                 const oModel =
-                    oView.getModel();
+                    this.base
+                        .getView()
+                        .getModel();
 
 
-                /*
-                 * RAP static action is collection-bound.
-                 *
-                 * Result:
-                 *
-                 * /EntitySet/
-                 * com.sap.gateway.srvd...
-                 * .Export(...)
-                 */
                 const sActionPath =
                     "/" +
                     ENTITY_SET +
@@ -433,19 +432,11 @@ sap.ui.define([
                     "(...)";
 
 
-                /*
-                 * Create deferred OData V4
-                 * action binding.
-                 */
                 const oActionBinding =
                     oModel.bindContext(
                         sActionPath
                     );
 
-
-                // -------------------------------------------------
-                // Set RAP action parameters
-                // -------------------------------------------------
 
                 oActionBinding.setParameter(
                     "descr",
@@ -471,52 +462,26 @@ sap.ui.define([
                 );
 
 
-                /*
-                 * IMPORTANT
-                 *
-                 * This code assumes you renamed the RAP
-                 * abstract entity field to:
-                 *
-                 * tabnames : abap.string;
-                 *
-                 * If your RAP field is still called:
-                 *
-                 * tabname
-                 *
-                 * change "tabnames" below to "tabname".
-                 */
                 oActionBinding.setParameter(
                     "tabnm",
                     oParameters.tabname
                 );
 
-                /*
-                 * Actual HTTP POST occurs here.
-                 *
-                 * This triggers your RAP:
-                 *
-                 * METHOD export.
-                 */
+
                 await oActionBinding.invoke();
 
 
-                /*
-                 * Refresh Export/Import logs after
-                 * successful export.
-                 */
                 oModel.refresh();
             },
 
 
             // =====================================================
-            // CANCEL
+            // CANCEL EXPORT
             // =====================================================
 
             onExportCancel: function () {
 
-                if (
-                    this._oExportDialog
-                ) {
+                if (this._oExportDialog) {
 
                     this._oExportDialog.close();
                 }
@@ -524,7 +489,7 @@ sap.ui.define([
 
 
             // =====================================================
-            // HELPERS
+            // GENERAL HELPERS
             // =====================================================
 
             _hasValue: function (vValue) {
@@ -553,121 +518,36 @@ sap.ui.define([
                 return "Export failed";
             },
 
+
             onTransportRequestValueHelp: function () {
 
-                const oView = this.base.getView();
+                if (!this._oTransportRequestValueHelp) {
 
-                if (!this._oTransportRequestDialog) {
-
-                    this._oTransportRequestDialog =
-                        new SelectDialog({
-                            title: "Select Transport Request",
-
-                            confirm: function (oEvent) {
-
-                                const oSelectedItem =
-                                    oEvent.getParameter("selectedItem");
-
-                                if (!oSelectedItem) {
-                                    return;
-                                }
-
-                                oView.getModel("export").setProperty(
-                                    "/transportRequest",
-                                    oSelectedItem.getTitle()
-                                );
-                            }
-                        });
-
-                    this._oTransportRequestDialog.bindAggregation(
-                        "items",
-                        {
-                            path: "/TransportRequestVH",
-
-                            template: new StandardListItem({
-                                title: "{trreq}",
-                                description: "{descr}"
-                            })
-                        }
-                    );
-
-                    oView.addDependent(
-                        this._oTransportRequestDialog
-                    );
+                    this._oTransportRequestValueHelp =
+                        new TransportRequestValueHelp(
+                            this
+                        );
                 }
 
-                this._oTransportRequestDialog.open();
+                this
+                    ._oTransportRequestValueHelp
+                    .open();
             },
 
             onTableNameValueHelp: function () {
 
-                const oView = this.base.getView();
+                if (!this._oTableNameValueHelp) {
 
-                const oMultiInput =
-                    oView.byId("tableNamesInput");
-
-                if (!this._oTableNameDialog) {
-
-                    this._oTableNameDialog =
-                        new SelectDialog({
-
-                            title: "Select Table Names",
-
-                            multiSelect: true,
-
-                            rememberSelections: true,
-
-                            search: (oEvent) => {
-                                this._filterValueHelpItems(
-                                    oEvent,
-                                    [
-                                        "tabnm",
-                                        "descr"
-                                    ]
-                                );
-                            },
-
-                            confirm: (oEvent) => {
-
-                                const aSelectedItems =
-                                    oEvent.getParameter(
-                                        "selectedItems"
-                                    ) || [];
-
-                                aSelectedItems.forEach(
-                                    (oItem) => {
-
-                                        this._addTableTokens(
-                                            oMultiInput,
-                                            oItem.getTitle()
-                                        );
-                                    }
-                                );
-                            }
-                        });
-
-                    this._oTableNameDialog
-                        .bindAggregation(
-                            "items",
-                            {
-                                path: "/TableNameVH",
-
-                                template:
-                                    new StandardListItem({
-                                        title: "{tabnm}",
-                                        description: "{descr}"
-                                    })
-                            }
+                    this._oTableNameValueHelp =
+                        new TableNameValueHelp(
+                            this
                         );
-
-                    oView.addDependent(
-                        this._oTableNameDialog
-                    );
                 }
 
-                this._oTableNameDialog.open();
+                this
+                    ._oTableNameValueHelp
+                    .open();
             },
-
         }
     );
 });

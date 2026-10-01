@@ -9,19 +9,18 @@
     },
     "title": "{{appTitle}}",
     "description": "{{appDescription}}",
-    
     "crossNavigation": {
-        "inbounds": {
-            "TableEntriesExportImport-manage": {
-                "semanticObject": "TableEntriesExportImport",
-                "action": "manage",
-                "title": "{{appTitle}}",
-                "signature": {
-                    "parameters": {},
-                    "additionalParameters": "allowed"
-                }
-            }
+      "inbounds": {
+        "TableEntriesExportImport-manage": {
+          "semanticObject": "TableEntriesExportImport",
+          "action": "manage",
+          "title": "{{appTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
         }
+      }
     },
     "resources": "resources.json",
     "sourceTemplate": {
@@ -73,7 +72,10 @@
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
-        "sap.fe.templates": {}
+        "sap.fe.templates": {},
+        "sap.ui.comp": {},
+        "sap.ui.table": {},
+        "sap.ui.layout": {}
       }
     },
     "contentDensities": {
@@ -145,7 +147,7 @@
                   "tableSettings": {
                     "type": "ResponsiveTable"
                   },
-                   "columns": {
+                  "columns": {
                     "DataField::Description": {
                       "width": "18rem"
                     },
@@ -164,9 +166,7 @@
                     "DataField::CreatedOn": {
                       "width": "10rem"
                     }
-
                   },
-
                   "actions": {
                     "CustomExport": {
                       "press": ".extension.bteexpimp.ext.controller.ExportExtension.onExportPress",

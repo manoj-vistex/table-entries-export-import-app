@@ -115,7 +115,7 @@
                     <MultiInput
                         id="tableNamesInput"
                         width="100%"
-                        showValueHelp="false"
+                        showValueHelp="true"
                         placeholder="Enter table name and press Enter"
                         valueHelpRequest=".onTableNameValueHelp"
                         submit=".onTableSubmit"
