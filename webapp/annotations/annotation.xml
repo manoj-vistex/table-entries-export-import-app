@@ -1,0 +1,75 @@
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common" />
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Communication.xml">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication" />
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata4/vta/ui_bte_expimp_o4/srvd/vta/bte_expimp/0001/$metadata">
+        <edmx:Include Namespace="com.sap.gateway.srvd.vta.bte_expimp.v0001" Alias="SAP__self" />
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="local">
+            <Annotations Target="SAP__self.ExportImportLogType">
+                <Annotation Term="UI.FieldGroup" Qualifier="Selection_GRP">
+                    <Record>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <!-- Export By always visible -->
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ExportBy" />
+
+                                    <Annotation Term="UI.Hidden">
+                                        <Ne>
+                                            <Path>Action</Path>
+                                            <String>E</String>
+                                        </Ne>
+                                    </Annotation>
+                                </Record>
+
+                                <!-- Show only when ExportBy = R -->
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="TransportRequest" />
+
+                                    <Annotation Term="UI.Hidden">
+                                        <Ne>
+                                            <Path>ExportBy</Path>
+                                            <String>R</String>
+                                        </Ne>
+                                    </Annotation>
+                                </Record>
+
+                                <!-- Show only when ExportBy = P -->
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="PackageName" />
+
+                                    <Annotation Term="UI.Hidden">
+                                        <Ne>
+                                            <Path>ExportBy</Path>
+                                            <String>P</String>
+                                        </Ne>
+                                    </Annotation>
+                                </Record>
+
+                                <!-- Show only when ExportBy = T -->
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="TableName" />
+
+                                    <Annotation Term="UI.Hidden">
+                                        <Ne>
+                                            <Path>ExportBy</Path>
+                                            <String>T</String>
+                                        </Ne>
+                                    </Annotation>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

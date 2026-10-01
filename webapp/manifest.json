@@ -1,0 +1,230 @@
+{
+  "_version": "1.83.0",
+  "sap.app": {
+    "id": "bteexpimp",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    
+    "crossNavigation": {
+        "inbounds": {
+            "TableEntriesExportImport-manage": {
+                "semanticObject": "TableEntriesExportImport",
+                "action": "manage",
+                "title": "{{appTitle}}",
+                "signature": {
+                    "parameters": {},
+                    "additionalParameters": "allowed"
+                }
+            }
+        }
+    },
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.22.0",
+      "toolsId": "552c1efa-a1fc-4afd-9e85-61da68b0a318"
+    },
+    "dataSources": {
+      "annotation": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/annotation.xml",
+        "settings": {
+          "localUri": "annotations/annotation.xml"
+        }
+      },
+      "mainService": {
+        "uri": "/sap/opu/odata4/vta/ui_bte_expimp_o4/srvd/vta/bte_expimp/0001/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "annotation"
+          ],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "4.01"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.148.9",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "bteexpimp.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "ExportImportLogList",
+          "target": "ExportImportLogList"
+        },
+        {
+          "pattern": "ExportImportLog({key}):?query:",
+          "name": "ExportImportLogObjectPage",
+          "target": "ExportImportLogObjectPage"
+        },
+        {
+          "pattern": "ExportImportLog({key})/_Message({key2}):?query:",
+          "name": "MessageObjectPage",
+          "target": "MessageObjectPage"
+        }
+      ],
+      "targets": {
+        "ExportImportLogList": {
+          "type": "Component",
+          "id": "ExportImportLogList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/ExportImportLog",
+              "variantManagement": "Page",
+              "initialLoad": "Enabled",
+              "navigation": {
+                "ExportImportLog": {
+                  "detail": {
+                    "route": "ExportImportLogObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  },
+                   "columns": {
+                    "DataField::Description": {
+                      "width": "18rem"
+                    },
+                    "DataField::Action": {
+                      "width": "10rem"
+                    },
+                    "DataField::ExportBy": {
+                      "width": "10rem"
+                    },
+                    "DataField::Status": {
+                      "width": "10rem"
+                    },
+                    "DataField::CreatedBy": {
+                      "width": "10rem"
+                    },
+                    "DataField::CreatedOn": {
+                      "width": "10rem"
+                    }
+
+                  },
+
+                  "actions": {
+                    "CustomExport": {
+                      "press": ".extension.bteexpimp.ext.controller.ExportExtension.onExportPress",
+                      "enabled": true,
+                      "visible": true,
+                      "text": "Export",
+                      "position": {
+                        "placement": "Before",
+                        "anchor": "DataFieldForAction::com.sap.gateway.srvd.vta.bte_expimp.v0001.import::Collection::com.sap.gateway.srvd.vta.bte_expimp.v0001.ExportImportLogType"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ExportImportLogObjectPage": {
+          "type": "Component",
+          "id": "ExportImportLogObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/ExportImportLog"
+            }
+          }
+        },
+        "MessageObjectPage": {
+          "type": "Component",
+          "id": "MessageObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/ExportImportLog/_Message"
+            }
+          }
+        }
+      }
+    },
+    "extends": {
+      "extensions": {
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ListReport.ListReportController": {
+            "controllerName": "bteexpimp.ext.controller.ExportExtension"
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  }
+}

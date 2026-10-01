@@ -1,0 +1,33 @@
+{
+  "generationParameters": {
+    "generationDate": "Fri Sep 25 2026 13:53:45 GMT+0530 (India Standard Time)",
+    "generatorPlatform": "Visual Studio Code",
+    "serviceType": "SAP System (ABAP Cloud)",
+    "metadataFilename": "",
+    "serviceUrl": "https://946db4dc-c756-483c-8fda-d23e86992815.abap.eu10.hana.ondemand.com/sap/opu/odata4/vta/ui_bte_expimp_o4/srvd/vta/bte_expimp/0001/",
+    "appName": "bteexpimp",
+    "appTitle": "Export and Import",
+    "appDescription": "Table Entries Export and Import",
+    "appNamespace": "",
+    "ui5Theme": "sap_horizon",
+    "ui5Version": "1.148.9",
+    "enableEslint": true,
+    "enableTypeScript": false,
+    "showMockDataInfo": true,
+    "generatorVersion": "1.22.0",
+    "template": "List Report Page V4",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [
+      {
+        "type": "Main Entity",
+        "value": "ExportImportLog"
+      },
+      {
+        "type": "Navigation Entity",
+        "value": "_Message"
+      }
+    ],
+    "launchText": "To launch the generated application, run the following from the generated application root folder:\n\n```\n    npm start\n```",
+    "valueHelpDownloaded": true
+  }
+}

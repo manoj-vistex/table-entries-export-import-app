@@ -1,0 +1,142 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="exportDialog"
+        title="Export"
+        contentWidth="22rem"
+        horizontalScrolling="false"
+        verticalScrolling="true"
+        resizable="true"
+        class="sapUiContentPadding"
+    >
+        <content>
+            <VBox>
+                <!-- ================================================= -->
+                <!-- Export Description                                -->
+                <!-- ================================================= -->
+
+                <Label
+                    text="Description:"
+                    labelFor="descrInput"
+                />
+
+                <Input
+                    id="descrInput"
+                    maxLength="40"
+                    value="{export>/description}"
+                    width="100%"
+                    class="sapUiTinyMarginBottom"
+                />
+
+                <!-- ================================================= -->
+                <!-- Export By                                         -->
+                <!-- ================================================= -->
+
+                <Label
+                    text="Export By:"
+                    labelFor="exportBySelect"
+                />
+
+                <Select
+                    id="exportBySelect"
+                    selectedKey="{export>/exportBy}"
+                    width="100%"
+                    class="sapUiTinyMarginBottom"
+                    items="{
+                        path: '/ExportByVH'
+                    }"
+                >
+                    <core:Item
+                        key="{ExportBy}"
+                        text="{Description}"
+                    />
+                </Select>
+
+                <!-- ================================================= -->
+                <!-- Transport Request                                 -->
+                <!-- ================================================= -->
+
+                <VBox visible="{= ${export>/exportBy} === 'R' }">
+                    <Label
+                        text="Transport Request:"
+                        labelFor="trnumInput"
+                    />
+
+                    <Input
+                        id="trnumInput"
+                        value="{export>/transportRequest}"
+                        width="100%"
+                        showValueHelp="true"
+                        valueHelpRequest=".onTransportRequestValueHelp"
+                    />
+                </VBox>
+
+                <!-- ================================================= -->
+                <!-- Package                                           -->
+                <!-- ================================================= -->
+
+                <VBox visible="{= ${export>/exportBy} === 'P' }">
+                    <Label
+                        text="Package:"
+                        labelFor="packageInput"
+                    />
+
+                    <ComboBox
+                        id="packageInput"
+                        selectedKey="{export>/packageName}"
+                        width="100%"
+                        items="{ path: '/PackageVH'}"
+                    >
+                        <core:Item
+                            key="{Packg}"
+                            text="{Packg}"
+                        />
+                    </ComboBox>
+                </VBox>
+
+                <!-- ================================================= -->
+                <!-- Multiple Table Names                              -->
+                <!-- ================================================= -->
+
+                <VBox visible="{= ${export>/exportBy} === 'T' }">
+                    <!--<Label text="Package:" labelFor="packageInput" />
+
+                    <ComboBox id="packageInput" selectedKey="{export>/packageName}" width="100%" items="{ path: '/PackageVH'}">
+                        <core:Item key="{Packg}" text="{Packg}" />
+                    </ComboBox>-->
+
+                    <Label
+                        text="Table Names:"
+                        labelFor="tableNamesInput"
+                    />
+
+                    <MultiInput
+                        id="tableNamesInput"
+                        width="100%"
+                        showValueHelp="false"
+                        placeholder="Enter table name and press Enter"
+                        valueHelpRequest=".onTableNameValueHelp"
+                        submit=".onTableSubmit"
+                    />
+                </VBox>
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button
+                text="Export"
+                type="Emphasized"
+                press=".onExportConfirm"
+            />
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="Cancel"
+                press=".onExportCancel"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

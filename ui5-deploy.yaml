@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "4.0"
+metadata:
+  name: bteexpimp
+type: application
+builder:
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**
+  customTasks:
+    - name: deploy-to-abap
+      afterTask: generateCachebusterInfo
+      configuration:
+        target:
+          url: https://946db4dc-c756-483c-8fda-d23e86992815.abap.eu10.hana.ondemand.com
+          authenticationType: reentranceTicket # SAML support for vscode
+        app:
+          name: /VUI/BTE_EXPIMP
+          description: Export and Import
+          package: /VUI/BASE
+          transport: VADK904202
+        exclude:
+          - /test/
